@@ -11,7 +11,8 @@ spec:
         storageClassName: ocs-external-storagecluster-cephfs
   apicast:
     productionSpec:
-      configurationLoader: lazy
+# Configuracao de teste pois estava dando crashloopback
+#      configurationLoader: lazy
       resources:
         requests:
           memory: 256Mi

@@ -29,7 +29,7 @@ Criar um cluster com recursos suficientes para suportar o 3scale.
 
 ## ⚙️ 2. Instalação do Operator via OperatorHub
 
-<a href="3scale/operador/Readme.md" target="_blank">Guia do Operador</a>
+<a href="operador/">Guia do Operador</a>
 
 
 ---
