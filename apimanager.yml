@@ -4,7 +4,7 @@ metadata:
   name: apimanager-sample
   namespace: 3scale
 spec:
-  wildcardDomain: apps.itz-ot6ru4.infra01-lb.syd05.techzone.ibm.com
+  wildcardDomain: apps.XXX
   system:
     fileStorage:
       persistentVolumeClaim:

@@ -1,120 +1,6 @@
-# 📘 Instalação do 3scale no OpenShift – Guia Completo
+# Troubleshooting
 
-
-Este projeto tem como objetivo agilizar a disponibilização e configuração de ambientes do Red Hat 3scale API Management no OpenShift, padronizando etapas de instalação, configuração e troubleshooting.
-
-A proposta é reduzir o tempo de setup, evitar erros comuns e fornecer um guia prático e reutilizável para implantação do 3scale em diferentes ambientes.
-
-
-> **Ambiente utilizado:** OpenShift Container Platform **4.18.35**  
-> **Operator:** 3scale API Management `0.10.1` — channel `threescale-2.13`  
-> **Namespace:** `3scale`
-
----
-
-## 🧱 1. Provisionamento do Ambiente
-
-### 🎯 Objetivo
-Criar um cluster com recursos suficientes para suportar o 3scale.
-
-### ⚙️ Sizing recomendado (mínimo funcional)
-
-| Componente    | CPU      | Memória    |
-|---------------|----------|------------|
-| Worker Nodes  | ≥ 3      | ≥ 8GB cada |
-| Total cluster | ≥ 6 vCPU | ≥ 16GB     |
-
-### ⚠️ Observações
-
-- Ambientes pequenos causam:
-  - `Insufficient CPU`
-  - Pods não agendados
-- APIcast e System são sensíveis a recursos
-
----
-
-## ⚙️ 2. Instalação do Operator via OperatorHub
-
-<a href="operador/">Guia do Operador</a>
-
-
-- [API Manager](apimanager/)
-- [Troubleshooting](ts/)
-
----
-
-## 🔐 3. Login via CLI (`oc`)
-
-Alterne para o terminal e faça login no cluster usando o token de acesso:
-
-```bash
-oc login \
-  --token=XXX \
-  --server=https://XXX:6443
-```
-
-Selecione o projeto `3scale`:
-
-```bash
-oc project 3scale
-```
-
----
-
-## 🧩 4. Configuração e Apply do APIManager
-
-### 📄 Arquivo `apimanager.yml`
-
-```yaml
-kind: APIManager
-apiVersion: apps.3scale.net/v1alpha1
-metadata:
-  name: apimanager-sample
-  namespace: 3scale
-spec:
-  wildcardDomain: apps.XXX
-  system:
-    fileStorage:
-      persistentVolumeClaim:
-        storageClassName: ocs-external-storagecluster-cephfs
-  apicast:
-    productionSpec:
-      configurationLoader: lazy
-      resources:
-        requests:
-          memory: 256Mi
-          cpu: 100m
-        limits:
-          memory: 512Mi
-          cpu: 500m
-    stagingSpec:
-      resources:
-        requests:
-          memory: 256Mi
-          cpu: 100m
-        limits:
-          memory: 512Mi
-          cpu: 500m
-```
-
-### 📌 Pontos importantes do manifesto
-
-| Campo | Valor | Observação |
-|-------|-------|------------|
-| `wildcardDomain` | `apps.itz-ot6ru4...` | Deve corresponder ao domínio real do cluster |
-| `storageClassName` | `ocs-external-storagecluster-cephfs` | CephFS — compatível com **ReadWriteMany (RWX)** |
-| `configurationLoader` | `lazy` | APIcast carrega configuração sob demanda |
-| `memory limit` | `512Mi` | Evita `OOMKilled` em ambientes com pouca RAM |
-
-### ▶️ Aplicar o manifesto
-
-```bash
-oc apply -f apimanager.yml
-```
-
----
-
-## 👀 5. Acompanhar a Subida dos Pods
+## 👀 1. Acompanhar a Subida dos Pods
 
 Monitore o estado dos pods em tempo real:
 
@@ -147,7 +33,7 @@ zync-que-xxx                       1/1     Running   0
 
 ---
 
-## 💾 6. Storage — Problema e Solução
+## 💾 2. Storage — Problema e Solução
 
 ### 🔴 Erro encontrado
 
@@ -177,7 +63,7 @@ system:
 
 ---
 
-## 🧠 7. Problemas de Scheduling
+## 🧠 3. Problemas de Scheduling
 
 ### 🔴 Erro
 
@@ -192,7 +78,7 @@ system:
 
 ---
 
-## 🧪 8. Problema de Image Pull Secret
+## 🧪 4. Problema de Image Pull Secret
 
 ### 🔴 Erro
 
@@ -212,7 +98,7 @@ registry.connect.redhat.com
 
 ---
 
-## 💥 9. CrashLoopBackOff no APIcast
+## 💥 5. CrashLoopBackOff no APIcast
 
 ### 🔍 Sintomas
 
@@ -260,7 +146,7 @@ apicast:
 
 ---
 
-## 🔄 10. Reinicialização dos Pods
+## 🔄 6. Reinicialização dos Pods
 
 Caso necessário, forçar rollout manual:
 
@@ -271,7 +157,7 @@ oc rollout latest dc/apicast-staging -n 3scale
 
 ---
 
-## 🌐 11. Checagem das Rotas
+## 🌐 7. Checagem das Rotas
 
 ```bash
 oc get routes -n 3scale
@@ -290,7 +176,7 @@ oc get routes -n 3scale
 
 ---
 
-## 🧭 12. Explicação das Rotas
+## 🧭 8. Explicação das Rotas
 
 ### 🔹 `system-provider` — Admin Portal
 
@@ -348,7 +234,7 @@ https://api-3scale-apicast-staging.apps.XXX
 
 ---
 
-## ✅ 13. Estado Final Esperado
+## ✅ 9. Estado Final Esperado
 
 - Todos os pods em `Running`
 - APIcast sem `CrashLoopBackOff`
