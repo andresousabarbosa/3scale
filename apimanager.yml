@@ -1,0 +1,29 @@
+kind: APIManager
+apiVersion: apps.3scale.net/v1alpha1
+metadata:
+  name: apimanager-sample
+  namespace: 3scale
+spec:
+  wildcardDomain: apps.itz-ot6ru4.infra01-lb.syd05.techzone.ibm.com
+  system:
+    fileStorage:
+      persistentVolumeClaim:
+        storageClassName: ocs-external-storagecluster-cephfs
+  apicast:
+    productionSpec:
+      configurationLoader: lazy
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
+          cpu: 500m
+    stagingSpec:
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
+          cpu: 500m          
